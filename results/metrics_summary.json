@@ -1,0 +1,81 @@
+{
+  "strategy_a": {
+    "dev": {
+      "total": 16,
+      "hit_at_1": "15/16",
+      "hit_at_1_pct": 93.75,
+      "evidence_hit_at_3": "16/16",
+      "evidence_hit_at_3_pct": 100.0
+    },
+    "test": {
+      "total": 6,
+      "hit_at_1": "4/6",
+      "hit_at_1_pct": 66.67,
+      "evidence_hit_at_3": "6/6",
+      "evidence_hit_at_3_pct": 100.0
+    },
+    "total": {
+      "total": 22,
+      "hit_at_1": "19/22",
+      "hit_at_1_pct": 86.36,
+      "evidence_hit_at_3": "22/22",
+      "evidence_hit_at_3_pct": 100.0
+    }
+  },
+  "strategy_b": {
+    "dev": {
+      "total": 16,
+      "hit_at_1": "16/16",
+      "hit_at_1_pct": 100.0,
+      "evidence_hit_at_3": "16/16",
+      "evidence_hit_at_3_pct": 100.0
+    },
+    "test": {
+      "total": 6,
+      "hit_at_1": "6/6",
+      "hit_at_1_pct": 100.0,
+      "evidence_hit_at_3": "6/6",
+      "evidence_hit_at_3_pct": 100.0
+    },
+    "total": {
+      "total": 22,
+      "hit_at_1": "22/22",
+      "hit_at_1_pct": 100.0,
+      "evidence_hit_at_3": "22/22",
+      "evidence_hit_at_3_pct": 100.0
+    }
+  },
+  "strategy_c": {
+    "dev": {
+      "total": 16,
+      "hit_at_1": "16/16",
+      "hit_at_1_pct": 100.0,
+      "evidence_hit_at_3": "16/16",
+      "evidence_hit_at_3_pct": 100.0
+    },
+    "test": {
+      "total": 6,
+      "hit_at_1": "6/6",
+      "hit_at_1_pct": 100.0,
+      "evidence_hit_at_3": "6/6",
+      "evidence_hit_at_3_pct": 100.0
+    },
+    "total": {
+      "total": 22,
+      "hit_at_1": "22/22",
+      "hit_at_1_pct": 100.0,
+      "evidence_hit_at_3": "22/22",
+      "evidence_hit_at_3_pct": 100.0
+    }
+  },
+  "parameters": {
+    "model": "models/gemini-embedding-001",
+    "dimensions": 768,
+    "total_questions": 22,
+    "dev_questions": 16,
+    "test_questions": 6,
+    "chunks_a": 346,
+    "chunks_b": 370,
+    "chunks_c": 370
+  }
+}

@@ -1,4 +1,4 @@
-strategy,chunking,chunk_size,overlap,metadata,filter,vectorizer,hypothesis,dev_hit1,dev_hit3,test_hit1,test_hit3,notes
-A,,,,,,,,,,,,
-B,,,,,,,,,,,,
-C,,,,,,,,,,,,
+strategy,model,chunk_params,num_chunks,upsert_time_s,hit_at_1_dev,evidence_hit3_dev,hit_at_1_test,evidence_hit3_test
+A (fixed-size),models/gemini-embedding-001,"size=500,overlap=50",346,4.19,15/16,16/16,4/6,6/6
+B (by-paragraph),models/gemini-embedding-001,max_size=500,370,4.71,16/16,16/16,6/6,6/6
+C (paragraph + filter),models/gemini-embedding-001,"max_size=500,filter=on",370,4.14,16/16,16/16,6/6,6/6
