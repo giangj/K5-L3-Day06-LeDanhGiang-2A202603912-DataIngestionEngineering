@@ -1,0 +1,648 @@
+﻿=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\artifacts\experiment_log.csv ===
+strategy,chunking,chunk_size,overlap,metadata,filter,vectorizer,hypothesis,dev_hit1,dev_hit3,test_hit1,test_hit3,notes
+A,,,,,,,,,,,,
+B,,,,,,,,,,,,
+C,,,,,,,,,,,,
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\data\format-example.json ===
+{
+  "warning": "Ví dụ giả lập về cấu trúc, không phải corpus hoặc benchmark đủ điều kiện.",
+  "page": {"document_id": "handbook-2025", "source": "example/handbook.pdf", "page": 3, "section": "tuyen_sinh", "year": 2025, "text": "Hạn nộp hồ sơ là ngày 30 tháng 6."},
+  "question": {"id": "q01", "type": "truc_tiep", "split": "dev", "question": "Hồ sơ phải nộp trước ngày nào?", "gold_source_id": "handbook-2025", "gold_page": 3, "evidence_quote": "Hạn nộp hồ sơ là ngày 30 tháng 6.", "expected_answer": "Ngày 30 tháng 6"}
+}
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\docs\README.md ===
+# Gợi ý công nghệ và thiết lập
+
+Chọn **một** phương án embedding model thật và **một** vector store; không cần cài tất cả. Ghi phiên bản, tên model, số chiều, cách chạy và chi phí trong báo cáo. Giữ cùng model, store và metric giữa ba cấu hình.
+
+## Embedding model
+
+- **API:** chọn OpenRouter, OpenAI hoặc Gemini và cấu hình key ở máy local. Kiểm tra chi phí và quyền gửi tài liệu tới provider.
+- **Local:** ví dụ [Sentence Transformers](https://sbert.net/docs/sentence_transformer/pretrained_models.html) với model đa ngữ phù hợp tiếng Việt, như `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Chuẩn bị model và dependencies trước buổi học; lần tải đầu có thể cần mạng và dung lượng. Model chạy local không bắt buộc key.
+
+Ghi model/version và cách xử lý query, document theo tài liệu model; không âm thầm fallback sang mock khi lỗi. TF-IDF có thể dùng để tham khảo thêm, không thay embedding bắt buộc.
+
+## Vector store
+
+| Lựa chọn | Đặc điểm cho lab | Tài liệu |
+|---|---|---|
+| PostgreSQL + pgvector | Phù hợp khi muốn dùng SQL và chạy PostgreSQL riêng | [pgvector](https://github.com/pgvector/pgvector) |
+| Qdrant | Hỗ trợ vector search và lọc theo payload; có thể chạy local | [Qdrant quickstart](https://qdrant.tech/documentation/quickstart/) |
+| Chroma | Có client local lưu trên đĩa; hỗ trợ metadata filter | [Chroma docs](https://docs.trychroma.com/) |
+
+Có thể chọn vector store khác nếu hỗ trợ **lưu bền vững, vector similarity search và metadata filtering**; ghi rõ cách xác minh và chạy lại. Dùng cùng một store cho ba cấu hình. Mode chỉ lưu trong RAM không đủ yêu cầu lưu bền vững.
+
+Nếu dùng PDF, chuẩn bị công cụ trích text; trang scan cần OCR hoặc được ghi lỗi và thay bằng đủ trang trích xuất được. Khi chọn approximate search, nêu cấu hình và lưu ý filter có thể ảnh hưởng số kết quả; không giả định mọi backend có cùng hành vi. Lưu cách khởi động, collection/index, model và dependency để người chấm tái lập.
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\report\individual\MSSV_HoTen.md ===
+# Báo cáo cá nhân — Day 6
+
+## Dữ liệu và pipeline
+- Chủ đề, nguồn/quyền, số trang và quy tắc tính trang:
+- Chuẩn hóa, lỗi và giới hạn:
+- Embedding model/provider/version/số chiều, vector store/version, metric, lệnh chạy và chi phí:
+- Metadata bắt buộc, trường lọc bổ sung, nguồn giá trị và lý do chọn:
+
+## Cấu hình và benchmark
+- A / B / C (tham số cụ thể, khác biệt duy nhất B–C):
+- ≥20 câu: phân chia ≥15 dev / ≥5 test, câu metadata filter và cách kiểm chứng evidence:
+- Tiêu chí chọn chiến lược đã chốt trước khi xem test:
+
+## Kết quả
+| Strategy | Split | Hit@1 (n/N) | Evidence Hit@3 (n/N) | Chunk count | Thời gian | Chi phí |
+|---|---|---|---|---|---|---|
+
+| Strategy | Coherence trung bình /2 (n) | Metadata đủ và đúng (n/N) | Filter tuân thủ (n/N hoặc N/A) | Grounding 0/1/2 (số câu) và trung bình /2 |
+|---|---|---|---|---|
+
+Đường dẫn trace, nhãn thủ công và cách chọn mẫu:
+
+## Phân tích và kết luận
+- So sánh A–B và B–C; 2 ví dụ sai có ID câu và nguồn:
+- Chiến lược chọn, đánh đổi, điều kiện áp dụng:
+- Hạn chế của dữ liệu, nhãn, test nhỏ, đo thời gian/chi phí:
+- Nếu làm lại hoặc mở rộng, cải tiến gì?
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\report\individual\README.md ===
+# Báo cáo cá nhân
+
+Copy `MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md`, điền kết quả thực tế và liên kết đến trace, nhãn audit cùng cấu hình. Không ghi giá trị ví dụ thành kết quả đã chạy.
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\scripts\check_setup.py ===
+"""Read-only setup check; this is a utility, not the student pipeline solution."""
+import os
+import sys
+from pathlib import Path
+
+import psycopg
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parents[1] / '.env')
+url = os.getenv('DATABASE_URL')
+if not url:
+    sys.exit('DATABASE_URL missing: copy starter/.env.example to starter/.env first.')
+try:
+    with psycopg.connect(url, connect_timeout=5) as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT current_database(), current_setting('server_version'), extversion FROM pg_extension WHERE extname = 'vector'")
+            row = cursor.fetchone()
+            if not row:
+                sys.exit('Connected, but pgvector extension is missing. See starter/README.md.')
+            print(f'Database: {row[0]} | PostgreSQL: {row[1]} | pgvector: {row[2]}')
+except psycopg.Error:
+    sys.exit('Database connection failed. Check Docker, port and DATABASE_URL in starter/.env.')
+print('Setup OK. Pipeline functions still need to be implemented.')
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\src\chunking.py ===
+"""Implement fixed-size and structure-aware chunking."""
+from .models import Chunk, DocumentPage
+
+
+def fixed_size(page: DocumentPage, size: int, overlap: int) -> list[Chunk]:
+    """TODO: split text into overlapping windows and retain page metadata."""
+    raise NotImplementedError("TODO: fixed_size")
+
+
+def by_paragraph(page: DocumentPage, max_size: int) -> list[Chunk]:
+    """TODO: group paragraphs, split oversized paragraphs and retain metadata."""
+    raise NotImplementedError("TODO: by_paragraph")
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\src\embeddings.py ===
+"""Choose a real embedding provider (API or local) and implement this contract."""
+from typing import Protocol
+
+
+class Embedder(Protocol):
+    model_name: str
+    dimensions: int
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        """Return one vector per input text, in the same order."""
+        ...
+
+    def embed_query(self, question: str) -> list[float]:
+        """Return a query vector compatible with the stored document vectors."""
+        ...
+
+
+class MyEmbedder:
+    """TODO: implement a provider adapter; do not silently fall back to mock vectors."""
+
+    def __init__(self, model_name: str) -> None:
+        self.model_name = model_name
+        raise NotImplementedError("TODO: initialize real embedder and dimensions")
+
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
+        raise NotImplementedError("TODO: embed_documents")
+
+    def embed_query(self, question: str) -> list[float]:
+        raise NotImplementedError("TODO: embed_query")
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\src\evaluation.py ===
+"""TODO: evaluate retrieved evidence and preserve per-query traces."""
+from typing import Any
+
+
+def evaluate_query(question: dict[str, Any], hits: list[dict[str, Any]]) -> dict[str, Any]:
+    """TODO: check source/page and enough gold evidence; keep hit@1 and hit@3 trace.
+
+    Accept any documented alternative gold evidence. Do not infer human grounding
+    or chunk coherence labels from exact string match.
+    """
+    raise NotImplementedError("TODO: evaluate_query")
+
+
+def summarize(traces: list[dict[str, Any]]) -> dict[str, Any]:
+    """TODO: aggregate Hit@1 and Evidence Hit@3 by strategy and dev/test split."""
+    raise NotImplementedError("TODO: summarize")
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\src\ingestion.py ===
+"""Read and normalize source data. TODO: implement functions."""
+from pathlib import Path
+from .models import DocumentPage
+
+
+def load_pdf(path: Path, document_id: str, source: str) -> list[DocumentPage]:
+    """TODO: extract each physical page; keep its page number and source.
+
+    Detect and record pages with no text. OCR, when needed, is a separate step.
+    """
+    raise NotImplementedError("TODO: load_pdf")
+
+
+def normalize_text(text: str) -> str:
+    """TODO: normalize Unicode and whitespace without discarding useful structure."""
+    raise NotImplementedError("TODO: normalize_text")
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\src\models.py ===
+"""Shared data contracts; keep traceability from chunk back to source."""
+from dataclasses import dataclass, field
+from typing import Any
+
+
+@dataclass
+class DocumentPage:
+    document_id: str
+    source: str
+    page: int
+    text: str
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class Chunk:
+    chunk_id: str
+    document_id: str
+    source: str
+    page: int
+    text: str
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\src\run.py ===
+"""Suggested pipeline entry point; TODO: implement the orchestration."""
+
+
+def main() -> None:
+    """TODO:
+
+    1. Load the corpus and benchmark; validate at least 30 content pages.
+    2. Build strategies A (fixed), B (paragraph) and C (B + metadata filter).
+    3. Embed with the same model and store vectors/metadata per strategy.
+    4. Run the same dev/test questions and save full top-3 traces.
+    5. Report retrieval metrics and prepare samples for manual assessment.
+
+    Follow the five dimensions in ../../BENCHMARK.md.
+    """
+    raise NotImplementedError("TODO: implement the Day 06 pipeline")
+
+
+if __name__ == "__main__":
+    main()
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\src\store.py ===
+"""TODO: store and search vectors using PostgreSQL + pgvector."""
+from typing import Any
+from .models import Chunk
+
+
+class PgVectorStore:
+    def __init__(self, database_url: str, dimensions: int) -> None:
+        """TODO: retain connection settings; validate model dimensions."""
+        raise NotImplementedError("TODO: initialize store")
+
+    def create_schema(self) -> None:
+        """TODO: create table with vector column and source/page/filter metadata."""
+        raise NotImplementedError("TODO: create_schema")
+
+    def upsert(self, strategy: str, chunks: list[Chunk], vectors: list[list[float]]) -> None:
+        """TODO: validate lengths/dimensions and write stable IDs without duplicates.
+
+        When re-ingesting changed source documents, remove obsolete chunks too.
+        """
+        raise NotImplementedError("TODO: upsert")
+
+    def search(self, strategy: str, query_vector: list[float], top_k: int = 3,
+               filters: dict[str, Any] | None = None) -> list[dict[str, Any]]:
+        """TODO: filter permitted metadata in SQL, rank by cosine distance, return top-k.
+
+        Return chunk ID, text, score and metadata. Parameterize user-supplied values.
+        """
+        raise NotImplementedError("TODO: search")
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\src\__init__.py ===
+"""Day 06 student starter: implementation required."""
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\.env.example ===
+# Local-only connection for the provided Docker Compose setup.
+DATABASE_URL=postgresql://day6:day6_local_only@127.0.0.1:55433/day6_lab
+
+# Choose ONE provider if you use an API; local embeddings do not need an API key.
+OPENROUTER_API_KEY=
+OPENAI_API_KEY=
+GEMINI_API_KEY=
+EMBEDDING_MODEL=
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\docker-compose.yml ===
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.7-pg16
+    environment:
+      POSTGRES_DB: day6_lab
+      POSTGRES_USER: day6
+      POSTGRES_PASSWORD: day6_local_only
+    ports:
+      - "127.0.0.1:55433:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/01-vector.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U day6 -d day6_lab"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+volumes:
+  pg_data:
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\init.sql ===
+-- Runs once when Docker creates a new volume.
+CREATE EXTENSION IF NOT EXISTS vector;
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\README.md ===
+# Starter · PostgreSQL + pgvector
+
+Bộ khởi động **tùy chọn** cho lab cá nhân. Docker Compose tạo PostgreSQL + pgvector local; các file trong `src/` là **khung pseudocode có TODO**, chưa đọc tài liệu, tạo embedding, lưu vector hay chạy benchmark. Bạn cần tự hiện thực. Vẫn có thể chọn Qdrant, Chroma hoặc vector store tương đương theo [GUIDE.md](../GUIDE.md).
+
+## Cấu trúc
+
+```text
+starter/
+├── docker-compose.yml     # PostgreSQL 16 + pgvector, chỉ mở cổng local
+├── init.sql               # bật extension khi tạo database mới
+├── requirements.txt       # psycopg, pypdf và python-dotenv
+├── .env.example           # cấu hình mẫu; copy thành .env
+├── scripts/check_setup.py # kiểm tra kết nối và extension (đã chạy được)
+├── src/
+│   ├── models.py          # cấu trúc dữ liệu mẫu
+│   ├── ingestion.py       # TODO: đọc / chuẩn hóa tài liệu
+│   ├── chunking.py        # TODO: chia chunk
+│   ├── embeddings.py      # TODO: chọn model API hoặc local
+│   ├── store.py           # TODO: lưu vector, metadata và filter
+│   ├── evaluation.py      # TODO: chấm truy xuất, lưu trace
+│   └── run.py             # TODO: kết nối các bước thành pipeline
+├── data/                  # bạn tự chuẩn bị corpus được phép sử dụng
+└── results/               # lưu kết quả của bạn
+```
+
+## 1. Cài và kiểm tra database
+
+Cần Docker Desktop hoặc Docker Engine + Compose, Python **3.11–3.14**, và mạng để tải image/dependencies lần đầu. Các lệnh sau chạy từ thư mục `starter/`:
+
+```bash
+cd starter
+python3 -m venv .venv
+```
+
+Kích hoạt `.venv`: macOS/Linux dùng `source .venv/bin/activate`; Windows PowerShell dùng `.venv\Scripts\Activate.ps1`. Sau đó:
+
+```bash
+python -m pip install -r requirements.txt
+# macOS/Linux: cp .env.example .env
+# Windows PowerShell: Copy-Item .env.example .env
+docker compose -p day6_student_starter up -d --wait
+python scripts/check_setup.py
+```
+
+Kỳ vọng: hiện tên database, phiên bản PostgreSQL và pgvector, sau đó `Setup OK`. Đây **chỉ là kiểm tra hạ tầng**, không phải kết quả benchmark. Docker dùng cổng `127.0.0.1:55433` và mật khẩu cố định **chỉ dùng local cho lab**; nếu cổng bận, sửa đồng thời port trong `docker-compose.yml` và `DATABASE_URL` trong `.env`. `init.sql` chỉ chạy khi volume mới được tạo; nếu database sẵn có chưa bật extension, xem log Docker và kiểm tra cấu hình thay vì xóa volume chứa dữ liệu.
+
+Dừng container nhưng giữ dữ liệu:
+
+```bash
+docker compose -p day6_student_starter stop
+```
+
+## 2. Chọn embedding model
+
+Điền key tương ứng trong `.env` nếu dùng OpenRouter, OpenAI hoặc Gemini; **không commit `.env`**. Model local không cần API key. `requirements.txt` chỉ có dependencies cơ bản: tự cài SDK hoặc thư viện local phù hợp với model bạn chọn và ghi lại version/lệnh cài trong báo cáo. Ghi tên model và số chiều; dùng cùng model cho toàn bộ chiến lược và vector query tương thích vector document.
+
+## 3. Hoàn thiện pipeline
+
+1. Đặt corpus vào `data/` hoặc cung cấp manifest/hướng dẫn truy cập. Đọc [GUIDE.md](../GUIDE.md) về **30 trang nội dung**, quyền dữ liệu và metadata.
+2. Hoàn thiện từng hàm TODO trong `src/`. Lưu ID tài liệu, nguồn, trang/vị trí và ít nhất một trường filter có ích.
+3. Xây ít nhất ba cấu hình; ví dụ A fixed-size, B theo đoạn, C như B nhưng có filter. Cần cùng corpus, model và benchmark; nạp lại không nhân đôi và xử lý chunk cũ khi dữ liệu đổi.
+4. Tự viết ít nhất 20 câu hỏi kèm evidence, tách dev/test trước khi thử theo [BENCHMARK.md](../BENCHMARK.md). Lưu trace top-3 và báo cáo đủ năm tiêu chí.
+5. Sau khi hoàn thiện, chạy `python -m src.run` từ thư mục `starter/`. Trước khi làm TODO, lệnh này **chủ động báo `NotImplementedError`**.
+
+Lưu code, cấu hình, kết quả và lệnh chạy để người chấm tái lập; không commit key, dữ liệu mật hoặc dữ liệu không có quyền chia sẻ.
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\starter\requirements.txt ===
+# Core setup and PDF parsing. Choose and install an embedding SDK separately.
+psycopg[binary]==3.3.8
+pypdf>=5,<7
+python-dotenv>=1,<2
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\BENCHMARK.md ===
+# Benchmark — năm tiêu chí đánh giá
+
+Mục tiêu là so sánh **ít nhất ba chiến lược dữ liệu** trên cùng corpus, model và bộ câu hỏi để chọn chiến lược phù hợp, kèm bằng chứng và lý do. Benchmark gồm bộ câu hỏi có gold, kết quả truy xuất, mẫu chấm thủ công và phân tích theo **năm tiêu chí** dưới đây.
+
+| Tiêu chí | Cần đo hoặc kiểm tra | Minh chứng |
+|---|---|---|
+| **1. Độ chính xác truy xuất** | Hit@1 và Evidence Hit@3 trên cùng bộ câu hỏi | Số câu đúng/tổng câu, top-3 và gold theo từng chiến lược |
+| **2. Tính mạch lạc của chunk** | Chunk có giữ trọn ý và đủ ngữ cảnh để hiểu không? | Chấm thủ công cùng 10 vị trí nguồn cho mỗi chiến lược, thang 0–2, kèm lý do |
+| **3. Tính hữu dụng của metadata** | Metadata có đúng, đủ để truy vết và giúp lọc phạm vi không? | Kiểm tra `source`, `page` và trường lọc trong top-3; tỷ lệ tuân thủ filter khi có yêu cầu |
+| **4. Chất lượng thông tin nền (Grounding Quality)** | Top-3 có đủ bằng chứng và điều kiện để trả lời, có truy được nguồn không? | Chấm thủ công 5 câu test mỗi chiến lược, thang 0–2, kèm lý do |
+| **5. Tác động của chiến lược dữ liệu** | Các thay đổi về chunking/metadata ảnh hưởng kết quả, chất lượng và tài nguyên ra sao? | So sánh A–B và B–C, số chunk, thời gian, chi phí, ví dụ lỗi và đánh đổi |
+
+Định nghĩa chi tiết thang điểm, mẫu và công thức xem [GUIDE.md](GUIDE.md). **Grounding ở đây đánh giá độ đủ của bằng chứng truy xuất**, không phải độ chính xác của câu trả lời LLM. Hit@3 không thay cho chấm thủ công coherence hoặc grounding. Điểm bài làm theo [RUBRIC.md](RUBRIC.md); năm tiêu chí trên là các khía cạnh cần báo cáo, không phải năm loại câu hỏi.
+
+## Bộ câu hỏi và gold
+
+Tự xây **ít nhất 20 câu** từ corpus, chia trước tối thiểu **15 dev / 5 test**. Nên có câu hỏi trực tiếp, diễn đạt lại, điều kiện/ngoại lệ và câu cần phân biệt bằng metadata, tùy dữ liệu. Đây là **gợi ý để phủ các lỗi**, không bắt buộc một tỷ lệ số câu cố định. Chọn và ghi cách phân chia trước khi thử nghiệm; có ít nhất **3 câu có filter**, trong đó ít nhất **1 câu test**, để kiểm tra metadata filter. Không điều chỉnh chiến lược dựa vào test; nếu đã xem test để sửa bài, ghi rõ và tạo tập test mới nếu có thể.
+
+Mỗi câu ghi: `id`, `split`, `question`, `expected_answer`, `gold_source_id`, `gold_page`, `evidence_quote` và `filter` nếu dùng. Có thể thêm nhãn loại câu để phân tích lỗi. `gold_page` là số trang PDF hoặc ID đơn vị truy vết tương đương.
+
+Trước khi chạy, kiểm chứng evidence tồn tại ở nguồn và đủ hỗ trợ đáp án, kể cả điều kiện/ngoại lệ. Nếu nhiều nguồn hoặc trang hợp lệ, ghi tất cả và chấp nhận một trong số đó. Không đưa đáp án hoặc gold source vào query/filter; giá trị filter phải được người dùng hoặc ngữ cảnh cung cấp **trước khi truy xuất**. Với câu không có filter, cấu hình C chạy không filter cho câu đó và ghi rõ. Không dùng câu không có đáp án trong nguồn cho chỉ số bắt buộc.
+
+Filter cần dựa vào metadata đáng tin, ví dụ `year`, `section`, `category`, `audience`, `language` hoặc `version`. Chọn corpus có ít nhất hai phạm vi phân biệt được; không tạo giá trị giả để filter đạt điểm. Xem [data/format-example.json](data/format-example.json) để tham khảo cấu trúc, không phải benchmark hoàn chỉnh.
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\CHECKPOINTS.md ===
+# Checkpoints — Day 06
+
+Bài **cá nhân**, thời lượng dự kiến 240 phút. Các mốc tính từ lúc bắt đầu và là điểm tự kiểm tra tại lớp, không phải hạn nộp bài. Deadline do giảng viên/coach thông báo.
+
+| Mốc | Mục tiêu | Minh chứng / tự kiểm tra |
+|---|---|---|
+| 0:25 | Chọn dữ liệu và setup | Ghi nguồn/quyền, số trang nội dung và quy tắc tính trang; công cụ đọc hoạt động. Có thể dùng [starter](starter/README.md) để kiểm tra pgvector. |
+| 1:00 | Xây benchmark | ≥20 câu có trang và evidence; tách 15 dev / 5 test, xác minh evidence trước khi chạy thử. |
+| 1:50 | Đọc, chuẩn hóa và thử chunk | Có log trang lỗi/rỗng, metadata truy nguồn; xuất được hai cấu hình chunk. |
+| 2:00 | Nghỉ | |
+| 2:40 | Lưu vector và chạy ba chiến lược | Cả ba index có thể truy xuất top-3; ghi model, tham số, thời gian/chi phí và kiểm tra nạp lại. |
+| 3:30 | Benchmark và audit | Có trace, Hit@1/Hit@3 dev/test và mẫu chấm coherence, metadata, grounding. |
+| 4:00 | Báo cáo và nộp | Có bảng so sánh, ví dụ lỗi, kết luận và các file theo [SUBMISSION.md](SUBMISSION.md). |
+
+Chi tiết và tiêu chí tính xem [GUIDE.md](GUIDE.md). Nếu thiết lập chậm, dùng một embedding model local cùng Chroma hoặc Qdrant local; chuẩn bị model, thư viện và dữ liệu trước buổi học.
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\GUIDE.md ===
+# Hướng dẫn thực hành
+
+## 1. Chọn dữ liệu (0:00–0:25)
+
+Chọn một chủ đề hẹp: handbook sinh viên, hướng dẫn sản phẩm, tài liệu kỹ thuật, chính sách công khai, hoặc báo cáo thường niên. Gợi ý nguồn công khai: [OpenStax](https://openstax.org/subjects), [Project Gutenberg](https://www.gutenberg.org/), [World Bank Open Knowledge Repository](https://openknowledge.worldbank.org/). Kiểm tra giấy phép và quyền tái phân phối của **từng tài liệu**; không đưa thông tin cá nhân, mật hay tài liệu không được phép vào repo hoặc API.
+
+Đơn vị tối thiểu: **30 trang nội dung hữu ích**. Với PDF, đếm trang thực có nội dung liên quan; loại trang bìa, mục lục, trang trống và trang chỉ có tài liệu tham khảo. Có thể kết hợp nhiều file. Ghi rõ số trang vật lý, các trang được tính và cách tính trong manifest. Với HTML/Markdown/text không có phân trang, dùng 30 đơn vị nguồn độc lập có ý nghĩa hoặc chia theo thứ tự thành các đơn vị có ít nhất **1.500 ký tự nội dung đã chuẩn hóa**; lưu ID, ranh giới và số ký tự mỗi đơn vị. Không nhân bản để đạt số lượng. Chọn corpus có cấu trúc và metadata để thử ít nhất hai cách chunk và một filter hữu ích. Nếu có scan, xử lý OCR hoặc thay bằng đủ trang trích xuất được; ghi lại phần lỗi/không đọc được.
+
+Manifest tối thiểu: `source_id`, `title`, `source_path_or_url`, `license_or_permission`, `accessed_at`, danh sách page ID/số trang, số ký tự. Ghi snapshot/version nếu có. Không tự đoán ngày hiệu lực.
+
+## 2. Chốt benchmark (0:25–1:00)
+
+Viết ít nhất **20 câu hỏi trước khi chạy thử**, theo hướng dẫn trong [BENCHMARK.md](BENCHMARK.md); tối thiểu 15 dev / 5 test. Nên có câu trực tiếp, diễn đạt lại và câu có điều kiện/ngoại lệ; có ít nhất 3 câu kiểm tra metadata filter, trong đó ít nhất 1 câu thuộc test. Chia theo tài liệu/chủ đề khi khả thi và ghi nguy cơ rò rỉ. Mỗi câu cần đáp án, nguồn/trang và evidence được kiểm chứng; filter do câu hỏi hoặc ngữ cảnh cung cấp trước khi truy xuất. Không dùng câu không có đáp án trong nguồn cho chỉ số bắt buộc.
+
+Kiểm chứng từng đoạn evidence thực sự nằm ở trang nguồn sau chuẩn hóa. Giữ tập và nhãn giống nhau giữa mọi chiến lược. Chuẩn bị thêm các câu hỏi nếu test khó đại diện; không thay đổi bộ test sau khi xem kết quả. Với nhiều nguồn bằng chứng hợp lệ, ghi tất cả và chấp nhận bất kỳ nguồn hợp lệ nào; không coi một câu trả lời đúng là sai chỉ vì trích nguồn hợp lệ khác.
+
+## 3. Pipeline và thí nghiệm (1:00–2:40, gồm 10 phút nghỉ)
+
+Dùng **Python**, đọc và chuẩn hóa Unicode, giữ liên kết về nguồn/trang và ghi lỗi. Tự chọn thư viện đọc tài liệu; nếu dùng OCR, ghi công cụ và kiểm chứng mẫu.
+
+Chọn **một embedding model thật**: API qua OpenRouter, OpenAI, Gemini hoặc model chạy local (ví dụ Sentence Transformers với model đa ngữ). Local có thể không cần API key nhưng có thể cần tải model và tài nguyên máy. Ghi rõ provider, tên/phiên bản model, số chiều, cách xử lý query/document; giữ nguyên các yếu tố đó giữa ba cấu hình. Không dùng vector mock/ngẫu nhiên; TF-IDF chỉ là thí nghiệm thêm, không thay semantic embedding bắt buộc.
+
+Chọn **một vector store** hỗ trợ lưu bền vững, tìm kiếm vector và filter metadata: PostgreSQL + pgvector, Qdrant, Chroma hoặc một store tương đương. Ghi phiên bản, cách khởi tạo, đường dẫn lưu/collection và lệnh chạy. Dùng cùng store và metric cosine cho ba cấu hình; ghi rõ exact hay approximate search nếu biết. Không thay vector store bằng phép tính thuần Python hoặc file SQLite tự quản.
+
+Metadata tối thiểu cho mỗi chunk: `document_id`, `source` và `page` hoặc vị trí truy vết tương đương. Bổ sung **ít nhất một trường** thực sự có ích cho filter, tùy corpus: `section`, `year`, `version`, `category`, `audience`, `language`, `effective_date` hoặc `document_type`. Có thể thêm nhiều trường; ghi kiểu dữ liệu, nguồn giá trị và lý do chọn. Không tự đoán giá trị không có trong nguồn.
+
+Ví dụ 3 cấu hình:
+
+| Cấu hình | Chunk | Metadata / truy xuất |
+|---|---|---|
+| A | Kích thước cố định, ví dụ 500 ký tự, overlap 50 | Gắn nguồn và trang; không lọc |
+| B | Theo heading/đoạn, giới hạn kích thước | Cùng metadata, không lọc |
+| C | Giống B | Thêm lọc theo metadata có giá trị đáng tin, chỉ áp dụng khi câu hỏi có filter |
+
+B–C chỉ thay lọc: phù hợp phân tích riêng ảnh hưởng metadata. A–B thay chunking. Corpus phải có ít nhất một trường lọc hữu ích với các giá trị phân biệt được; thiết kế câu hỏi kiểm tra metadata theo [BENCHMARK.md](BENCHMARK.md). Không đưa gold source/đáp án vào query hay filter. Nếu metadata phụ thuộc ngữ cảnh người dùng, ghi rõ filter là **input giả định được cung cấp trước**. Các giá trị lọc phải tồn tại và được kiểm chứng từ nguồn.
+
+Đo số chunk, phân bố độ dài, tổng ký tự/token, thời gian ingest và chi phí (0 nếu không dùng dịch vụ trả phí). Nạp lại cùng phiên bản và kiểm tra không nhân đôi; mô tả cách xử lý tài liệu đổi. Luôn báo lỗi nếu backend không hoạt động, không âm thầm fallback sang mock.
+
+## 4. Chạy và đánh giá (2:40–3:30)
+
+Với mỗi chiến lược, chạy top-3 cho mọi câu hỏi, lưu câu hỏi, ID và text của các chunk, score, metadata, evidence/nhãn. Báo riêng dev và test. Đọc ít nhất 5 câu test cho từng cấu hình; dùng cùng câu hỏi, cùng tiêu chí và ghi nhãn từng trường hợp. Đánh giá năm khía cạnh:
+
+1. **Retrieval accuracy — Hit@1 và Evidence Hit@3:** một hit khi chunk thuộc nguồn/trang gold và chứa **đủ** evidence đã ghi, hoặc bằng chứng tương đương được người chấm xác nhận. Hit@1 = số câu top-1 hit / số câu; Hit@3 = số câu có ít nhất một hit trong top-3 / số câu. Báo số tử/mẫu, không chỉ %. Nếu evidence bị tách qua nhiều chunk, ghi lỗi; có thể bổ sung đánh giá hợp bằng chứng đa chunk nhưng không thay định nghĩa chính.
+2. **Chunk coherence:** chọn cùng 10 vị trí nội dung/đoạn nguồn cho mỗi chiến lược (có thể có nhiều chunk bao phủ cùng một vị trí); chấm thủ công chunk chứa vị trí đó: 0 = bị cắt giữa ý/thiếu chủ thể làm không hiểu; 1 = hiểu một phần, thiếu ngữ cảnh; 2 = tự hiểu được và giữ trọn ý. Công bố mẫu, nhãn, lý do và điểm trung bình /2. Xác định vị trí trước khi xem điểm, ví dụ theo 10 page ID đầu đã sắp xếp.
+3. **Metadata usefulness:** trên 5 câu test × top-3, kiểm tra thủ công `source`, `page` và trường cần thiết khác so với nguồn. Báo số bản ghi có metadata **đủ và đúng** / tổng bản ghi đã kiểm tra; ghi từng lỗi. Với câu cần filter, báo số câu mà top-3 tuân thủ filter / số câu có filter; nếu tập đang đo không có câu filter thì N/A, không mặc định 100%. Đủ trường không chứng minh hữu ích: giải thích ít nhất một trường giúp truy vết hoặc lọc, và một hạn chế.
+4. **Grounding quality:** chỉ đánh giá evidence retrieval, **không tự gọi đây là độ chính xác câu trả lời LLM**. Trên 5 câu test, chấm top-3: 0 = không có bằng chứng; 1 = có nhưng thiếu điều kiện/ngữ cảnh cần thiết; 2 = đủ để trả lời và truy nguồn. Báo số lượng từng mức và trung bình /2 kèm lý do. Có thể báo Evidence Hit@3 tự động như proxy, nhưng không thay nhãn thủ công.
+5. **Data strategy impact:** so sánh kết quả, coherence, metadata và tài nguyên giữa A–B, B–C. Nêu đánh đổi, sai số do mẫu nhỏ, trường hợp thất bại và lý do chọn chiến lược; không suy rộng ngoài corpus. Nếu nhiều mục tiêu xung đột, định nghĩa tiêu chí chọn trước khi đọc test (ví dụ ưu tiên Hit@3, sau đó grounding, rồi tài nguyên).
+
+Thực hiện chấm thủ công độc lập với điểm số nếu có thể; ghi rõ người chấm là tác giả và nguy cơ thiên lệch. Không dùng LLM judge mà không ghi phương pháp hoặc xem xét nhãn.
+
+## 5. Demo và nộp bài (3:30–4:00)
+
+Nộp `README` lệnh setup/run, mã nguồn, manifest/corpus hoặc hướng dẫn truy cập, benchmark và gold, cấu hình ba chiến lược, log lỗi, trace đầy đủ, bảng đo dev/test, bảng nhãn thủ công, báo cáo theo mẫu. Có seed khi cần; ghi phiên bản thư viện, model, chi phí và thời điểm chạy. Tập test nhỏ chỉ là minh họa: không tuyên bố chiến lược tốt nhất tổng quát. Nếu dữ liệu/model quá lớn, nộp manifest và cách lấy cùng output nhỏ để kiểm chứng.
+
+## Mở rộng tùy chọn: hybrid retrieval
+
+Nếu còn thời gian, giữ nguyên chunk và metadata filter, kết hợp dense similarity với một phương pháp từ khóa như BM25. Chọn tham số trên dev, so sánh với baseline trên câu hỏi chưa dùng để chỉnh và ghi cả trường hợp hybrid làm xấu kết quả. Không bắt buộc dùng hybrid để đạt điểm tối đa.
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\README.md ===
+# Day 06 · Data Ingestion Engineering
+
+**Lab cá nhân** · **4 giờ** · **Dữ liệu tự chọn**
+
+Biến tài liệu thành kho tri thức có thể truy xuất cho AI agent, rồi đo xem cách chuẩn bị dữ liệu nào hiệu quả nhất.
+
+| 📄 Dữ liệu | 🧩 Chiến lược | 🎯 Benchmark |
+|---|---|---|
+| Tối thiểu **30 trang nội dung** | Tối thiểu **3 cấu hình** | Tối thiểu **20 câu hỏi** |
+
+## Bắt đầu nhanh
+
+Dùng [starter PostgreSQL + pgvector](starter/README.md) để dựng database và hoàn thiện các hàm TODO, hoặc tự chọn vector store tương đương. Starter chỉ là khung: **bạn tự hiện thực pipeline và benchmark**.
+
+## 1. Xây pipeline
+
+![Đọc tài liệu, chuẩn hóa, chia chunk, tạo vector, lưu và kiểm tra](assets/ingestion-pipeline.svg)
+
+Chọn tài liệu được phép sử dụng; giữ **ID tài liệu, nguồn, trang/vị trí** và metadata phù hợp. Dùng embedding model thật qua API hoặc chạy local; lưu và truy xuất bằng pgvector, Qdrant, Chroma hoặc một store tương đương.
+
+## 2. So sánh và đánh giá
+
+![Ba chiến lược được đánh giá trên cùng corpus và benchmark dev/test](assets/benchmark-workflow.svg)
+
+Dùng cùng dữ liệu, model và câu hỏi cho cả ba cấu hình. Tách **15 câu dev / 5 câu test** trước khi chạy; chọn cấu hình trên dev, rồi đánh giá test sau khi cố định. Mỗi câu hỏi cần có đoạn bằng chứng và trang nguồn; thiết kế bộ câu hỏi và đánh giá theo [BENCHMARK.md](BENCHMARK.md).
+
+Đánh giá theo năm khía cạnh: **độ chính xác truy xuất**, **tính mạch lạc của chunk**, **tính hữu dụng của metadata**, **chất lượng grounding** và **tác động của chiến lược dữ liệu**. Giải thích lựa chọn bằng kết quả, ví dụ lỗi và các đánh đổi.
+
+## 3. Chuẩn bị bài nộp
+
+1. Chạy pipeline và lưu cấu hình, kết quả top-3, trace cùng nhãn đánh giá thủ công.
+2. Điền [thông tin học viên](STUDENT.md), [nhật ký thí nghiệm](artifacts/experiment_log.csv) và bản sao [mẫu báo cáo cá nhân](report/individual/MSSV_HoTen.md).
+3. Kiểm tra mã nguồn, cách chạy, manifest dữ liệu và checklist trong [SUBMISSION.md](SUBMISSION.md).
+
+## Tài liệu hướng dẫn
+
+| Bạn cần tìm | Tài liệu |
+|---|---|
+| Setup baseline PostgreSQL + pgvector | [starter/README.md](starter/README.md) |
+| Các bước làm và cách tính chỉ số | [GUIDE.md](GUIDE.md) |
+| Tiến độ trong 4 giờ | [CHECKPOINTS.md](CHECKPOINTS.md) |
+| Năm tiêu chí benchmark và bộ câu hỏi | [BENCHMARK.md](BENCHMARK.md) |
+| Tiêu chí chấm điểm | [RUBRIC.md](RUBRIC.md) |
+| Quy tắc sử dụng dữ liệu, AI và API | [RULES.md](RULES.md) |
+| Cách nộp bài | [SUBMISSION.md](SUBMISSION.md) |
+
+[data/format-example.json](data/format-example.json) chỉ minh họa định dạng, không phải corpus đủ điều kiện. Phần xử lý và benchmark do bạn tự hiện thực; không bắt buộc xây chatbot.
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\REPORT_TEMPLATE.md ===
+# Báo cáo cá nhân — Day 6
+
+## Dữ liệu và pipeline
+- Chủ đề, nguồn/quyền, số trang và quy tắc tính trang:
+- Chuẩn hóa, lỗi và giới hạn:
+- Embedding model/provider/version/số chiều, vector store/version, metric, lệnh chạy và chi phí:
+- Metadata bắt buộc, trường lọc bổ sung, nguồn giá trị và lý do chọn:
+
+## Cấu hình và benchmark
+- A / B / C (tham số cụ thể, khác biệt duy nhất B–C):
+- ≥20 câu: phân chia ≥15 dev / ≥5 test, câu metadata filter và cách kiểm chứng evidence:
+- Tiêu chí chọn chiến lược đã chốt trước khi xem test:
+
+## Kết quả
+| Strategy | Split | Hit@1 (n/N) | Evidence Hit@3 (n/N) | Chunk count | Thời gian | Chi phí |
+|---|---|---|---|---|---|---|
+
+| Strategy | Coherence trung bình /2 (n) | Metadata đủ và đúng (n/N) | Filter tuân thủ (n/N hoặc N/A) | Grounding 0/1/2 (số câu) và trung bình /2 |
+|---|---|---|---|---|
+
+Đường dẫn trace, nhãn thủ công và cách chọn mẫu:
+
+## Phân tích và kết luận
+- So sánh A–B và B–C; 2 ví dụ sai có ID câu và nguồn:
+- Chiến lược chọn, đánh đổi, điều kiện áp dụng:
+- Hạn chế của dữ liệu, nhãn, test nhỏ, đo thời gian/chi phí:
+- Nếu làm lại hoặc mở rộng, cải tiến gì?
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\RUBRIC.md ===
+# Rubric cá nhân — 100 điểm
+
+Điểm dựa trên bằng chứng và khả năng tái lập, không dựa vào việc đạt Hit@3 cao. Một kết quả thấp nhưng giải thích trung thực vẫn có thể đạt điểm tốt.
+
+| Hạng mục | Điểm | Bằng chứng |
+|---|---:|---|
+| Corpus và xử lý | 20 | ≥30 trang nội dung hợp lệ, manifest/giấy phép (8); đọc, chuẩn hóa, ghi lỗi, truy vết nguồn (12) |
+| Ba chiến lược và lưu trữ | 20 | 3 cấu hình chạy được và ghi tham số (8); so sánh có kiểm soát (6); embedding model thật + vector store, metadata filter, nạp lại không trùng hoặc giải thích minh chứng (6) |
+| Benchmark và retrieval | 20 | ≥20 câu có evidence, có câu kiểm tra metadata và tách dev/test trước thử nghiệm (10); trace và Hit@1/Hit@3 đúng, chạy đủ ba cấu hình (10) |
+| Năm khía cạnh và phân tích | 25 | Retrieval (5), coherence có nhãn (5), metadata đủ/đúng và hữu dụng (5), grounding thủ công (5), data strategy impact & trade-off (5) |
+| Tái lập và báo cáo | 15 | Lệnh chạy, model/chi phí, artifacts (8); kết luận, ví dụ lỗi, giới hạn và trình bày (7) |
+
+Thiếu thành phần chỉ được chấm phần có bằng chứng; không tự giả định dữ liệu/test hoặc kết quả. Corpus chưa đủ 30 trang nội dung không đạt phần tương ứng; dưới ba chiến lược không đạt đầy đủ hạng mục chiến lược. Không dùng điểm test để tinh chỉnh rồi báo như holdout độc lập.
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\RULES.md ===
+# Quy tắc làm bài
+
+## AI, nguồn và tính trung thực
+
+- Được dùng AI để giải thích, viết code và hỗ trợ phân tích; học viên phải hiểu và giải thích được bài làm. Ghi công cụ và cách kiểm tra trong báo cáo.
+- Không tự tạo số liệu, nhãn, nguồn, log hoặc kết quả chưa chạy. Điểm thấp vẫn có giá trị nếu được phân tích trung thực.
+- Không sao chép bài làm của người khác. Ghi nguồn, giấy phép và thay đổi khi dùng dữ liệu, mã hoặc tài liệu bên ngoài.
+- Chỉ dùng tài liệu có quyền xử lý; không đưa dữ liệu mật hoặc cá nhân vào repo hay API. Việc tài liệu được xem công khai không đồng nghĩa được phép tái phân phối hoặc dùng cho mọi mục đích.
+
+## Benchmark và API
+
+- Tự xác minh evidence, tách dev/test và ghi tiêu chí chọn cấu hình trước khi xem test. Nếu xem test để sửa bài, ghi rõ và không coi kết quả đó là kiểm tra độc lập; tạo tập mới nếu cần.
+- Giữ nguyên corpus, bộ câu hỏi, model và định nghĩa metric giữa các chiến lược. Ghi thay đổi có chủ đích; không đưa gold answer/source vào query hay filter.
+- Không commit `.env`, API key, token, dữ liệu riêng tư, môi trường ảo hay log có secret. Không âm thầm thay model thật bằng vector ngẫu nhiên khi API lỗi.
+- Khi gặp lỗi provider, quota hoặc xử lý tài liệu, ghi lại lỗi và phần chưa chạy; nêu đúng phương án dự phòng đã dùng.
+
+Thời hạn và cách nộp cụ thể do giảng viên/coach công bố; không tự suy diễn từ mốc checkpoint.
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\STUDENT.md ===
+# Thông tin học viên
+
+- Họ và tên:
+- MSSV:
+- Lớp: L3A / L3B / khác:
+- Chủ đề và corpus:
+- Repo bài nộp:
+- Commit chốt bài:
+
+
+=== FILE: E:\AI_vin20k\K5-L3-Day06-DataIngestionEngineering-main\K5-L3-Day06-DataIngestionEngineering-main\SUBMISSION.md ===
+# Submission — bài cá nhân
+
+## Repo bài nộp
+
+Fork repo đề bài hoặc clone rồi đẩy lên repo cá nhân. Đặt tên gợi ý `K5-L3A-DAY06-MSSV-DataIngestion` hoặc `K5-L3B-DAY06-MSSV-DataIngestion`; theo hướng dẫn lớp nếu có quy ước khác. Điền [STUDENT.md](STUDENT.md) và nộp link repo theo kênh giảng viên/coach chỉ định. Thời hạn do giảng viên/coach thông báo.
+
+## Cấu trúc tối thiểu
+
+```text
+STUDENT.md
+README.md                         # cách setup, chạy, đường dẫn dữ liệu
+src/ hoặc starter/src/             # code pipeline do học viên viết
+data/manifest.*                   # nguồn, trang, quyền, cách lấy
+benchmark/                        # câu hỏi, split, gold evidence
+artifacts/experiment_log.csv      # cấu hình và giả thuyết A/B/C
+results/                          # thống kê, trace, nhãn audit, log
+report/individual/<MSSV>_<HoTen>.md
+```
+
+Mẫu báo cáo: [report/individual/MSSV_HoTen.md](report/individual/MSSV_HoTen.md). `src/` có thể đặt ở root hoặc `starter/src/`; benchmark và dữ liệu thật do học viên tạo. Nếu không được phép nộp dữ liệu gốc hoặc trace chứa nội dung bị hạn chế, cung cấp hướng dẫn truy cập/tái tạo và minh chứng được phép chia sẻ; báo cho người chấm biết cách xác minh.
+
+## Checklist
+
+- [ ] Dữ liệu ≥30 trang nội dung hợp lệ, manifest ghi nguồn, quyền, số trang và quy tắc tính.
+- [ ] ≥20 câu theo [BENCHMARK.md](BENCHMARK.md), có evidence đã kiểm chứng và tách tối thiểu 15 dev / 5 test trước thử nghiệm.
+- [ ] Có embedding model thật và vector store hỗ trợ lưu bền vững, vector search, metadata filter; ghi phiên bản và cấu hình.
+- [ ] Có ba cấu hình, một so sánh thay đúng một yếu tố; cùng model, corpus và benchmark.
+- [ ] Chạy đủ và lưu trace top-3, chỉ số dev/test; ghi chi phí, model và thời gian.
+- [ ] Có audit thủ công và phân tích cả 5 khía cạnh theo GUIDE; ghi giới hạn.
+- [ ] Có lệnh chạy, code, manifest, experiment log và báo cáo cá nhân.
+- [ ] Không có secret, dữ liệu riêng tư hoặc dữ liệu không được phép chia sẻ.
+- [ ] Repo mở được cho người chấm và đã nộp link theo hướng dẫn lớp.
+
+
